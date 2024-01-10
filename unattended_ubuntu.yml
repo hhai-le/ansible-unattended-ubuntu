@@ -1,0 +1,10 @@
+---
+- hosts: ansible
+  connection: local
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+  - name: customize ISO
+    include_role:
+      name: ./
