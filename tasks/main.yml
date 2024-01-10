@@ -1,0 +1,82 @@
+---
+# tasks file for unattended_ubuntu
+
+- name: ensure 7z is installed
+  apt:
+    name: p7zip-full
+    state: present
+
+- name: create directory for custom iso
+  tempfile:
+    state: directory
+  register: tempfile_1
+
+- name: copy iso to temp folder
+  copy:
+    src: "files/{{iso_name}}.iso"
+    dest: "{{ tempfile_1.path }}"
+
+- name: create source-files folder
+  file:
+    state: directory
+    path: "{{ tempfile_1.path }}/iso"
+
+- name: uncompress iso
+  shell: "7z -y x {{iso_name}}.iso -oiso"
+  args:
+    chdir: "{{ tempfile_1.path }}"
+
+- name: moving [BOOT]
+  shell: "mv {{ tempfile_1.path }}/iso/'[BOOT]' {{ tempfile_1.path }}/BOOT"
+
+- name: edit grub.cfg
+  template:
+    src: grub.cfg.j2
+    dest: "{{ tempfile_1.path }}/iso/boot/grub/grub.cfg"
+
+- name: create server folder
+  file:
+    path: "{{ tempfile_1.path }}/iso/server"
+    state: directory
+
+- name: create meta-data
+  file:
+    path: "{{ tempfile_1.path }}/iso/server/meta-data"
+    state: touch
+
+- name: copy user-data
+  template:
+    src: user-data.j2
+    dest:  "{{ tempfile_1.path }}/iso/server/user-data"
+
+- name: copy xorriso.sh file
+  copy:
+    src: files/xorriso.sh
+    dest: "{{ tempfile_1.path }}/xorriso.sh"
+    mode: '0755'
+
+- name: generate ISO
+  shell: "./xorriso.sh {{ tempfile_1.path }}/iso {{iso_autoinstall}} {{iso_autoinstall}}.iso"
+  args:
+    chdir: "{{ tempfile_1.path }}"
+
+      #- name: remove old ISO
+      #  file:
+      #    path: "/iso/{{iso_autoinstall}}.iso"
+      #    state: absent
+      #
+      #- name: copy new ISO to NFS folder
+      #  shell: mv  "{{ tempfile_1.path }}/{{iso_autoinstall}}.iso" /iso
+      #  become: true
+      #  become_method: sudo
+      #
+    #- name: remove iso path
+    #  shell: rm -rf "{{ tempfile_1.path }}"
+    #  become: true
+    #  become_method: sudo
+
+      #- name: remove xorriso.sh file
+      #  shell: rm -rf /tmp/xorriso.sh
+      #  become: true
+      #  become_method: sudo
+
