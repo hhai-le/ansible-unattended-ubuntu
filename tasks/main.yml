@@ -1,6 +1,21 @@
 ---
 # tasks file for unattended_ubuntu
 
+- name: check iso file existence
+  stat:
+    path: "{{ role_path }}/files/{{iso_name}}.iso"
+  register: iso_file
+  delegate_to: localhost
+
+- name: download ubuntu iso file
+  get_url:
+    url: "https://releases.ubuntu.com/jammy/{{iso_name}}.iso"
+    dest: "{{ role_path }}/files/{{iso_name}}.iso"
+    mode: '0440'
+    checksum: {{iso_checksum}}
+  delegate_to: localhost
+  when: not iso_file.stat.exists
+
 - name: ensure 7z is installed
   apt:
     name: p7zip-full
@@ -60,23 +75,23 @@
   args:
     chdir: "{{ tempfile_1.path }}"
 
-      #- name: remove old ISO
-      #  file:
-      #    path: "/iso/{{iso_autoinstall}}.iso"
-      #    state: absent
-      #
-      #- name: copy new ISO to NFS folder
-      #  shell: mv  "{{ tempfile_1.path }}/{{iso_autoinstall}}.iso" /iso
-      #  become: true
-      #  become_method: sudo
-      #
-    #- name: remove iso path
-    #  shell: rm -rf "{{ tempfile_1.path }}"
-    #  become: true
-    #  become_method: sudo
+- name: remove old ISO
+  file:
+    path: "/iso/{{iso_autoinstall}}.iso"
+    state: absent
 
-      #- name: remove xorriso.sh file
-      #  shell: rm -rf /tmp/xorriso.sh
-      #  become: true
-      #  become_method: sudo
+- name: copy new ISO to NFS folder
+  shell: mv  "{{ tempfile_1.path }}/{{iso_autoinstall}}.iso" /iso
+  become: true
+  become_method: sudo
+
+- name: remove iso path
+  shell: rm -rf "{{ tempfile_1.path }}"
+  become: true
+  become_method: sudo
+
+- name: remove xorriso.sh file
+  shell: rm -rf "{{ tempfile_1.path }}/xorriso.sh"
+  become: true
+  become_method: sudo
 
