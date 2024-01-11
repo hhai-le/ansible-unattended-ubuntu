@@ -75,6 +75,12 @@
   args:
     chdir: "{{ tempfile_1.path }}"
 
+- name: check old iso file existence
+  stat:
+    path: "{{ role_path }}/files/{{iso_name}}.iso"
+  register: old_iso_file
+  delegate_to: localhost
+
 - name: remove old ISO
   file:
     path: "/iso/{{iso_autoinstall}}.iso"

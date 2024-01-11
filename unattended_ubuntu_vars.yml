@@ -5,3 +5,4 @@ default_route: 192.168.86.1
 hostname: ubuntu-autolab
 iso_name: ubuntu-22.04.3-live-server-amd64
 iso_autoinstall:  ubuntu-22.04.3-auto
+iso_checksum: sha256:a4acfda10b18da50e2ec50ccaf860d7f20b389df8765611142305c0e911d16fd
