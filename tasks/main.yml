@@ -83,12 +83,12 @@
 
 - name: remove old ISO
   file:
-    path: "/iso/{{iso_autoinstall}}.iso"
+    path: "/{{nfs_share}}/{{iso_autoinstall}}.iso"
     state: absent
   when: not old_iso_file.stat.exists
 
 - name: copy new ISO to NFS folder
-  shell: mv  "{{ tempfile_1.path }}/{{iso_autoinstall}}.iso" /iso
+  shell: mv  "{{ tempfile_1.path }}/{{iso_autoinstall}}.iso /{{nfs_share}} "
   become: true
   become_method: sudo
 
