@@ -1,7 +1,8 @@
 ---
-ip_address: 192.168.86.133/24
-nameserver_address: "[172.16.11.5,172.16.11.6]"
-default_route: 192.168.86.1
-hostname: ubuntu-autolab
-iso_name: ubuntu-22.04.3-live-server-amd64
-iso_autoinstall:  ubuntu-22.04.3-auto
+ip_address: 192.168.148.216/24
+nameserver_address: "[192.168.148.11,192.168.148.12]"
+default_route: 192168.148.1
+hostname: VNL-AutoLab-216
+iso_name: ubuntu-22.04.4-live-server-amd64
+iso_autoinstall: VNL-AutoLab-216
+iso_checksum: sha256:45f873de9f8cb637345d6e66a583762730bbea30277ef7b32c9c3bd6700a32b2
